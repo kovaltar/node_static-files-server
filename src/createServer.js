@@ -27,15 +27,20 @@ function createServer() {
 
       if (pathname === '/file') {
         res.statusCode = 200;
-        res.end('Path should start with "/file/"');
+
+        res.statusMessage =
+          'Path should start with "/file/" and should not contain ".."';
+        res.end('Path should start with "/file/" and should not contain ".."');
 
         return;
       }
 
       if (!pathname.startsWith(pathStart)) {
         res.statusCode = 400;
-        res.statusMessage = 'Invalid route. Path should start with "/file/"';
-        res.end('Invalid route. Path should start with "/file/"');
+
+        res.statusMessage =
+          'Path should start with "/file/" and should not contain ".."';
+        res.end('Path should start with "/file/" and should not contain ".."');
 
         return;
       }
