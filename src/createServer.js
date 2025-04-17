@@ -8,8 +8,6 @@ function createServer() {
   const server = http.createServer((req, res) => {
     res.setHeader('content-type', 'text/plain');
 
-    console.log(`req.url = ${req.url}`);
-
     const pathStart = '/file/';
     let reqUrl = '';
     let pathname = '';
@@ -27,8 +25,15 @@ function createServer() {
         return;
       }
 
-      if (!pathname.startsWith(pathStart)) {
+      if (pathname === '/file') {
         res.statusCode = 200;
+        res.end('Path should start with "/file/"');
+
+        return;
+      }
+
+      if (!pathname.startsWith(pathStart)) {
+        res.statusCode = 400;
         res.statusMessage = 'Invalid route. Path should start with "/file/"';
         res.end('Invalid route. Path should start with "/file/"');
 
@@ -45,7 +50,6 @@ function createServer() {
 
             return;
           }
-
           res.statusCode = 404;
           res.statusMessage = 'File not found';
           res.end('File not found');
