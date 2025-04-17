@@ -3,6 +3,7 @@
 
 const http = require('node:http');
 const fs = require('node:fs');
+const mime = require('mime-types');
 
 function createServer() {
   const server = http.createServer((req, res) => {
@@ -11,7 +12,7 @@ function createServer() {
     const pathStart = '/file/';
     let reqUrl = '';
     let pathname = '';
-    let shortPath;
+    let realPath;
 
     if (req.url.includes('..')) {
       res.statusCode = 400;
@@ -26,6 +27,8 @@ function createServer() {
     try {
       reqUrl = new URL(req.url || '', `http://${req.headers.host}`);
       pathname = reqUrl.pathname;
+
+      const reqPath = pathname.replace(/^\/file\//, '') || 'index.html';
 
       if (pathname.includes('//')) {
         res.statusCode = 404;
@@ -55,11 +58,15 @@ function createServer() {
         return;
       }
 
-      shortPath = './public/' + pathname.slice(pathStart.length);
+      realPath = './public/' + reqPath;
 
-      if (shortPath) {
-        fs.readFile(shortPath, (err, data) => {
+      if (realPath) {
+        fs.readFile(realPath, (err, data) => {
           if (!err) {
+            const mimeType =
+              mime.lookup(realPath) || 'application/octet-stream';
+
+            res.setHeader('content-type', mimeType);
             res.statusCode = 200;
             res.end(data);
 
