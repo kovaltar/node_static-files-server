@@ -13,6 +13,16 @@ function createServer() {
     let pathname = '';
     let shortPath;
 
+    if (req.url.includes('..')) {
+      res.statusCode = 400;
+
+      res.statusMessage =
+        'Access denied! Attempt to access files outside public folder';
+      res.end('Access denied! Attempt to access files outside public folder');
+
+      return;
+    }
+
     try {
       reqUrl = new URL(req.url || '', `http://${req.headers.host}`);
       pathname = reqUrl.pathname;
